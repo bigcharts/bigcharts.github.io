@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="BigCharts-R1: Enhanced Chart Reasoning with Visual Reinforcement Finetuning">
+  <meta name="keywords" content="BigCharts, Chart Reasoning, Visual AI, Reinforcement Learning">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BigCharts-R1: Enhanced Chart Reasoning with Visual Reinforcement Finetuning</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/954/954591.png">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"></script>
+  <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.16.0/gradio.js"></script>
+</head>
+
+<style>
+  .expandable-card .card-text-container {
+    max-height: 200px;
+    overflow-y: hidden;
+    position: relative;
+  }
+
+  .expandable-card.expanded .card-text-container {
+    max-height: none;
+  }
+
+  .expand-btn {
+    position: relative;
+    display: none;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #510c75;
+    border-color: transparent;
+  }
+
+  .expand-btn:hover {
+    background-color: rgba(200, 200, 200, 0.8);
+    text-decoration: none;
+    border-color: transparent;
+    color: #510c75;
+  }
+
+  .expand-btn:focus {
+    outline: none;
+    text-decoration: none;
+  }
+
+  .expandable-card:not(.expanded) .card-text-container:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 90px;
+    background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 1));
+  }
+
+  .expandable-card:not(.expanded) .expand-btn {
+    margin-top: -40px;
+  }
+
+  .card-body {
+    padding-bottom: 5px;
+  }
+
+  .vertical-flex-layout {
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .figure-img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .adjustable-font-size {
+    font-size: calc(0.5rem + 2vw);
+  }
+
+  .chat-history {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+
+  #gradio pre {
+    background-color: transparent;
+  }
+
+  .conference-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .publication-links {
+    margin-top: 20px;
+  }
+
+  .link-block {
+    margin: 0 10px;
+  }
+
+  .external-link {
+    transition: all 0.3s ease;
+  }
+
+  .external-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+</style>
+
+<body>
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <!-- Conference Badge -->
+            <div class="conference-badge">
+              📊 Accepted at COLM 2025
+            </div>
+            
+            <h1 class="title is-1 publication-title">BigCharts-R1: <span class="is-size-2"><span class="is-size-1">E</span>nhanced <span class="is-size-1">C</span>hart <span class="is-size-1">R</span>easoning with <span class="is-size-1">V</span>isual <span class="is-size-1">R</span>einforcement <span class="is-size-1">F</span>inetuning</span></h1>
+            
+            <div class="is-size-5 publication-authors">
+              <div class="is-size-5 publication-authors">
+                <span class="author-block">
+                    <a href="#" style="color:#f68946;font-weight:normal;">Ahmed Masry<sup> 1,6 </sup></a> ,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#F2A900;font-weight:normal;">Abhay Puri<sup> 1 </sup></a> ,
+                </span>
+                <span class="author-block">
+                  <a href="#" style="color:#f68946;font-weight:normal;">Masoud Hashemi<sup> 5 </sup></a> ,
+              </span>
+                <span class="author-block">
+                    <a href="#" style="color:#f68946;font-weight:normal;">Juan Rodriguez<sup> 1,2,4 </sup></a> ,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#f68946;font-weight:normal;">Megh Thakkar<sup> 5 </sup></a> ,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#008AD7;font-weight:normal;">Khyati Mahajan<sup> 5 </sup></a> ,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#F2A900;font-weight:normal;">Vikas Yadav<sup> 5 </sup></a> ,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#f68946;font-weight:normal;">Sathwik Tejaswi Madhusudhan<sup> 5 </sup></a> , 
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#008AD7;font-weight:normal;">Alexandre Piché<sup> 1 </sup></a>,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#F2A900;font-weight:normal;">Dzmitry Bahdanau<sup> 1 </sup></a> ,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#f68946;font-weight:normal;">Christopher Pal<sup> 1,2,3 </sup></a> ,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#008AD7;font-weight:normal;">David Vazquez<sup> 1 </sup></a> ,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#008AD7;font-weight:normal;">Enamul Hoque<sup> 6 </sup></a> ,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#008AD7;font-weight:normal;">Perouz Taslakian<sup> 1 </sup></a> ,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#008AD7;font-weight:normal;">Sai Rajeswar Mudumba<sup> 1 </sup></a> ,
+                </span>
+                <span class="author-block">
+                    <a href="#" style="color:#F2A900;font-weight:normal;">Spandana Gella<sup> 1 </sup></a> 
+                </span>                    
+            </div>
+            <div class="is-size-5 publication-authors">
+                <span class="author-block"><b style="color:#f68946; font-weight:normal">▶ </b>ServiceNow Research <sup> 1 </sup></span>
+                <span class="author-block"><b style="color:#0a5178; font-weight:normal">▶ </b>Mila - Quebec AI Institute <sup> 2 </sup></span>
+                <span class="author-block"><b style="color:#F2A900; font-weight:normal">▶ </b>Canada CIFAR AI Chair <sup> 3 </sup></span>
+                <span class="author-block"><b style="color:#35625d; font-weight:normal">▶ </b>ETS, Montreal, Canada <sup> 4 </sup></span>
+                <span class="author-block"><b style="color:#008AD7; font-weight:normal">▶ </b>ServiceNow <sup> 5 </sup></span>
+                <span class="author-block"><b style="color:#55181c; font-weight:normal">▶ </b>York University, Toronto, Canada <sup> 6 </sup></span>
+            </div>
+            
+            <!-- Publication Links -->
+            <div class="column has-text-centered">
+                <div class="publication-links">
+            <span class="link-block">
+                <a href="#" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code (Coming Soon!)</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper (Coming Soon!)</span>
+                </a>
+              </span>
+        </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="section" style="background-color:#efeff081">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3" style="text-align: center;">Abstract</h2>
+      <!-- Image -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-six-fifths">
+          <figure>
+            <img src="static/images/fig1.png" alt="BigCharts-R1 Pipeline" class="figure-img">
+            <figcaption> <b>Figure 1:</b> BigCharts construction and BigCharts-R1 training pipeline. We begin by
+              extracting a high-quality corpus from open chart datasets, Google Search, and Common
+              Crawl. We then generate and execute the code responsible for producing these
+              charts to replot them, and then derive question-answer pairs with chain-of-thought
+              reasoning. For training BigCharts-R1, we use a two-stage approach: (i) visual
+              instruction tuning via SFT on large-scale synthetic data, and (b) RL (GRPO) with
+              verifiable rewards and human-labeled data to enhance chart reasoning.</figcaption>
+          </figure>
+        </div>
+      </div>
+      <!-- Abstract -->
+      <div class="columns is-centered has-text-centered">
+        <div class="columns is-centered has-text-centered">
+            <div class="column is-six-fifths">
+              <div class="content has-text-justified">
+                <p>
+                  Chart comprehension is crucial for effective human decision-making, yet current vision-language models (VLMs) struggle with this task due to limitations in training data and methodologies. To address these challenges, we introduce BigCharts-R1, a state-of-the-art chart reasoning model, alongside a novel dataset and training framework.
+                </p>
+                <ol type="1">
+                  <li><b>BigCharts Dataset</b>. <span style="font-size: 95%;">We propose a novel dataset creation pipeline, BigCharts, which generates visually diverse chart images by replotting real-world charts sourced from various online platforms. Unlike purely synthetic datasets, BigCharts maintains authenticity and visual diversity while ensuring accurate underlying data, overcoming the estimation errors often found in automatically extracted data tables.</span></li>
+                  <li><b>Comprehensive Training Framework:</b>. <span style="font-size: 95%;">Our approach integrates supervised fine-tuning (SFT) with Group Relative Policy Optimization (GRPO)-based reinforcement learning. We introduce novel reward signals specifically designed for chart reasoning, which significantly enhances model robustness and generalization across diverse chart styles and domains.</span></li>
+                  <li><b>State-of-the-Art Performance:</b>. <span style="font-size: 95%;">Extensive experiments demonstrate that BigCharts-R1 surpasses existing methods on multiple chart question-answering benchmarks, outperforming even larger open-source and closed-source models. This showcases BigCharts-R1's superior capabilities in chart reasoning.</span></li>
+                  </ol> 
+                 
+              </div>
+            </div>
+          </div>
+          </div>
+    </section>
+
+  <!-- Dataset Statistics Section -->
+  <section class="section" style="background-color:#f8fafc">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">Dataset Statistics</h2>
+          <div class="content has-text-justified"> 
+              <figure>
+                  <img src="static/images/stats.png" alt="BigCharts Dataset Statistics" class="figure-img">
+                  <figcaption> <b>Figure 2:</b> Figure 2 provides statistics of the BIGCHARTS dataset, presenting the distribution of chart sources, chart topics, and chart question and answer types.</figcaption>
+                </figure>
+              </div>
+            </div> 
+      </div>
+    </section>
+
+  <!-- Results Table Section -->
+  <section class="section" style="background-color:#f8fafc">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">Results</h2>
+          <div class="content has-text-justified">
+            <p>We evaluate BigCharts-R1 against state-of-the-art open-source and closed-source models across multiple chart question answering benchmarks. Our models demonstrate superior performance, particularly in the 3B and 7B parameter ranges.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="columns is-centered">
+        <div class="column is-full-width">
+          <div class="table-container" style="background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden; margin-top: 20px;">
+            <div class="table-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; text-align: center;">
+              <h3 style="font-size: 18px; font-weight: 600; line-height: 1.4;">Comparison of BigCharts-R1 and variants with open-source and closed-source baselines on chart question answering benchmarks</h3>
+            </div>
+            
+            <div class="table-wrapper" style="overflow-x: auto; background: white;">
+              <div class="table" style="display: grid; grid-template-columns: 280px repeat(11, 80px) 70px; min-width: 1200px; border-collapse: collapse;">
+                <!-- Header -->
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">Model</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">FQA-Sub<br>Val1</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">FQA-Sub<br>Val2</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">DVQA-Sub<br>ValE</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">DVQA-Sub<br>ValH</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">PQA-Sub<br>T1</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">PQA-Sub<br>T2</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">ChartQA<br>aug</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">ChartQA<br>hum</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">ChartQA<br>avg</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">CharXiv<br>Reas.</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">CharXiv<br>Des.</div>
+                <div class="cell header-row" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f1f5f9; font-weight: 600; color: #334155;">Avg</div>
+
+                <!-- Closed-Source Models -->
+                <div class="category-row" style="background: #1e293b; color: white; font-weight: 600; grid-column: 1 / -1; padding: 12px 16px; border-bottom: 2px solid #334155;">Closed-Source Models</div>
+                
+                <div class="cell closed-source model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(59, 130, 246, 0.05);">GPT-4o (OpenAI et al., 2024)</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">65.70</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">69.10</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">57.50</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">61.20</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">59.50</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">19.90</div>
+                <div class="cell closed-source dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell closed-source dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">85.07</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">50.50</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">82.58</div>
+                <div class="cell closed-source best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">61.22</div>
+
+                <div class="cell closed-source model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(59, 130, 246, 0.05);">Gemini-Flash-2.0 (Georgiev et al., 2024)</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">54.90</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">54.50</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">60.60</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">59.50</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">60.40</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">32.70</div>
+                <div class="cell closed-source dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell closed-source dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">85.40</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">50.30</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">75.10</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">59.26</div>
+
+                <div class="cell closed-source model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(59, 130, 246, 0.05);">Claude Sonnet 3.5 (Anthropic, 2024)</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">43.30</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">44.70</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">56.90</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">56.60</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">49.20</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">32.90</div>
+                <div class="cell closed-source dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell closed-source dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">90.80</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">60.20</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">84.30</div>
+                <div class="cell closed-source" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(59, 130, 246, 0.05);">57.65</div>
+
+                <!-- Open-Source Models < 7B -->
+                <div class="category-row" style="background: #1e293b; color: white; font-weight: 600; grid-column: 1 / -1; padding: 12px 16px; border-bottom: 2px solid #334155;">Open-Source Models &lt; 7B</div>
+
+                <div class="cell open-small model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(168, 85, 247, 0.05);">Intern-VL2.5-1B (Chen et al., 2025)</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">59.4</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">60.0</div>
+                <div class="cell open-small best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">93.2</div>
+                <div class="cell open-small best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">92.2</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">61.70</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">24.80</div>
+                <div class="cell open-small dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-small dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">75.9</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">19.00</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">38.40</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">58.29</div>
+
+                <div class="cell open-small model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(168, 85, 247, 0.05);">Intern-VL2.5-2B (Chen et al., 2025)</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">64.3</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">64.3</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">97.5</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">95.7</div>
+                <div class="cell open-small best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">71.10</div>
+                <div class="cell open-small best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">38.20</div>
+                <div class="cell open-small dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-small dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">79.2</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">21.30</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">49.70</div>
+                <div class="cell open-small best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">64.59</div>
+
+                <div class="cell open-small model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(168, 85, 247, 0.05);">Phi 3.5-Vision-4B (Abdin et al., 2024)</div>
+                <div class="cell open-small best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">64.9</div>
+                <div class="cell open-small best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">66.8</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">84.9</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">84.1</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">48.6</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">11.90</div>
+                <div class="cell open-small dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-small dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-small best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">81.8</div>
+                <div class="cell open-small best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">32.70</div>
+                <div class="cell open-small best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">55.02</div>
+                <div class="cell open-small" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(168, 85, 247, 0.05);">58.97</div>
+
+                <!-- Open-Source Models 7-12B -->
+                <div class="category-row" style="background: #1e293b; color: white; font-weight: 600; grid-column: 1 / -1; padding: 12px 16px; border-bottom: 2px solid #334155;">Open-Source Models 7-12B</div>
+
+                <div class="cell open-medium model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(34, 197, 94, 0.05);">Intern-VL2.5-8B (Chen et al., 2025)</div>
+                <div class="cell open-medium best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">69.60</div>
+                <div class="cell open-medium best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">69.00</div>
+                <div class="cell open-medium best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">96.60</div>
+                <div class="cell open-medium best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">95.20</div>
+                <div class="cell open-medium best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">74.70</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">42.30</div>
+                <div class="cell open-medium dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-medium dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">84.80</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">32.90</div>
+                <div class="cell open-medium best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">68.60</div>
+                <div class="cell open-medium best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">70.41</div>
+
+                <div class="cell open-medium model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(34, 197, 94, 0.05);">LLaVA-Next-Mistral-7B (Li et al., 2024a)</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">58.1</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">57.7</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">72.1</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">71.2</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">41.7</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">8.0</div>
+                <div class="cell open-medium dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-medium dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">51.80</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">13.90</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">35.40</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">45.54</div>
+
+                <div class="cell open-medium model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(34, 197, 94, 0.05);">Llama 3.2-Vision-11B (Grattafiori et al., 2024)</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">0.0</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">0.0</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">3.5</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">3.2</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">0.0</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">0.0</div>
+                <div class="cell open-medium dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-medium dash" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); color: #94a3b8; font-weight: 300;">-</div>
+                <div class="cell open-medium best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">83.40</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">31.20</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">59.35</div>
+                <div class="cell open-medium" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(34, 197, 94, 0.05);">20.07</div>
+
+                <!-- Chart-Specific LVLMs -->
+                <div class="category-row" style="background: #1e293b; color: white; font-weight: 600; grid-column: 1 / -1; padding: 12px 16px; border-bottom: 2px solid #334155;">Chart-Specific LVLMs</div>
+
+                <div class="cell chart-specific model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(249, 115, 22, 0.05);">ChartGemma-3B (Masry et al., 2024b)</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">38.90</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">37.00</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">37.90</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">37.00</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">35.60</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">20.70</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">90.80</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">69.52</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">80.16</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">12.50</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">21.30</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">35.67</div>
+
+                <div class="cell chart-specific model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(249, 115, 22, 0.05);">TinyChart-3B (Zhang et al., 2024)</div>
+                <div class="cell chart-specific best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">48.00</div>
+                <div class="cell chart-specific best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">46.10</div>
+                <div class="cell chart-specific best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">61.90</div>
+                <div class="cell chart-specific best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">50.20</div>
+                <div class="cell chart-specific best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">55.30</div>
+                <div class="cell chart-specific best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">50.60</div>
+                <div class="cell chart-specific best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">93.86</div>
+                <div class="cell chart-specific best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">73.34</div>
+                <div class="cell chart-specific best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">83.60</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">8.30</div>
+                <div class="cell chart-specific" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05);">16.15</div>
+                <div class="cell chart-specific best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(249, 115, 22, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">46.68</div>
+
+                <!-- Our Qwen2.5-VL Models -->
+                <div class="category-row" style="background: #1e293b; color: white; font-weight: 600; grid-column: 1 / -1; padding: 12px 16px; border-bottom: 2px solid #334155;">Our Qwen2.5-VL Models</div>
+
+                <div class="cell our-models model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(236, 72, 153, 0.05);">Qwen2.5-VL-3B (CoT)</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">58.10</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">57.00</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">76.20</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">75.60</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">54.80</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">43.30</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">86.40</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">63.84</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">75.12</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">32.60</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">59.77</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">59.17</div>
+
+                <div class="cell our-models model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(236, 72, 153, 0.05);">Qwen2.5-VL-3B + SFT</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">76.10</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">75.70</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">76.30</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">73.80</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">74.60</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">58.40</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">90.00</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">79.20</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">84.60</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">36.00</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">62.85</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">68.71</div>
+
+                <div class="cell our-models model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(236, 72, 153, 0.05);">BigCharts-R1-3B</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">80.10</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">81.00</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">81.20</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">80.60</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">78.50</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">59.90</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">94.32</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">82.00</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">88.16</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">37.40</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">62.38</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">72.14</div>
+
+                <div class="cell our-models model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(236, 72, 153, 0.05);">Qwen2.5-VL-7B (CoT)</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">80.70</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">79.30</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">78.30</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">78.30</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">73.40</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">50.40</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">81.68</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">71.28</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">76.48</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">41.30</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">66.85</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">69.45</div>
+
+                <div class="cell our-models model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(236, 72, 153, 0.05);">Qwen2.5-VL-7B + SFT</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">79.10</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">75.90</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">79.80</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">77.50</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">77.70</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">60.40</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">91.44</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">80.88</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">86.16</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">39.40</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">69.00</div>
+                <div class="cell our-models" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05);">71.66</div>
+
+                <div class="cell our-models model-name" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: flex-start; text-align: left; padding-left: 16px; font-weight: 500; background: rgba(236, 72, 153, 0.05);">BigCharts-R1-7B</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">81.20</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">81.20</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">83.80</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">83.60</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">80.90</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">61.90</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">94.88</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">84.80</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">89.84</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">41.30</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">66.58</div>
+                <div class="cell our-models best" style="padding: 12px 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(236, 72, 153, 0.05); font-weight: 700; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); border-radius: 4px;">74.48</div>
+              </div>
+            </div>
+            
+            <div class="legend" style="padding: 20px; background: #f8fafc; border-top: 1px solid #e2e8f0;">
+              <div style="font-weight: 600; color: #1e293b; margin-bottom: 8px;">Key Results:</div>
+              <div style="font-size: 14px; color: #475569; line-height: 1.6;">
+                <p><strong>BigCharts-R1-3B</strong> achieves an average score of <strong>72.14%</strong> across all benchmarks, outperforming GPT-4o (61.22%) by a significant margin.</p>
+                <p><strong>BigCharts-R1-7B</strong> reaches <strong>74.48%</strong> average performance, demonstrating the effectiveness of our training approach at larger scales.</p>
+                <p>Our models show particularly strong performance on chart-specific tasks like ChartQA and DVQA, highlighting the benefits of our specialized training methodology.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+      
+      
+  
+<section class="hero teaser">
+<div class="container is-max-desktop">
+    <div class="hero-body">
+    <h4 class="subtitle has-text-centered">
+        🔜<span style="color: #ff3860">[Coming Soon!]</span> More details about methodology, evaluation metrics, code, and dataset.
+    </h4>
+    </div>
+</div>
+</section>
+      
+
+</body>
+
+</html>
